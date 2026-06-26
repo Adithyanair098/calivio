@@ -2,30 +2,31 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // ── Brand Colors ──────────────────────────────────────────
-  static const Color primary        = Color(0xFF2E7D32); // Deep green
-  static const Color primaryLight   = Color(0xFF66BB6A); // Light green
-  static const Color accent         = Color(0xFFF57F17); // Warm amber
-  static const Color background     = Color(0xFFF5F6FA); // Off-white
-  static const Color surface        = Color(0xFFFFFFFF); // Pure white
-  static const Color textPrimary    = Color(0xFF1A1A2E); // Near black
-  static const Color textSecondary  = Color(0xFF6B7280); // Muted grey
-  static const Color divider        = Color(0xFFE5E7EB); // Light divider
+  static const Color primary       = Color(0xFF2E7D32);
+  static const Color primaryLight  = Color(0xFF66BB6A);
+  static const Color accent        = Color(0xFFF57F17);
+  static const Color background    = Color(0xFFF5F6FA);
+  static const Color surface       = Color(0xFFFFFFFF);
+  static const Color textPrimary   = Color(0xFF1A1A2E);
+  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color divider       = Color(0xFFE5E7EB);
 
-  // ── Main Theme ────────────────────────────────────────────
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+
+      // ── Color Scheme ──────────────────────────────────────
+      // Removed deprecated 'background' field (Flutter 3.22+)
       colorScheme: ColorScheme.fromSeed(
         seedColor: primary,
         primary: primary,
         secondary: accent,
         surface: surface,
-        background: background,
       ),
 
       scaffoldBackgroundColor: background,
 
-      // App Bar
+      // ── App Bar ───────────────────────────────────────────
       appBarTheme: const AppBarTheme(
         backgroundColor: surface,
         elevation: 0,
@@ -40,36 +41,47 @@ class AppTheme {
         iconTheme: IconThemeData(color: textPrimary),
       ),
 
-      // Bottom Navigation Bar
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      // ── Material 3 Navigation Bar ─────────────────────────
+      // Replaces deprecated BottomNavigationBarTheme
+      navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface,
-        selectedItemColor: primary,
-        unselectedItemColor: textSecondary,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
         elevation: 8,
-        selectedLabelStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
+        height: 68,
+        indicatorColor: Color(0xFFD0E8D1), // soft green selection pill
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              color: primary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            );
+          }
+          return const TextStyle(
+            color: textSecondary,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: primary, size: 24);
+          }
+          return const IconThemeData(color: textSecondary, size: 24);
+        }),
       ),
 
-      // Cards
+      // ── Cards ─────────────────────────────────────────────
       cardTheme: CardThemeData(
         elevation: 0,
         color: surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: divider, width: 1),
+          side: const BorderSide(color: divider, width: 1),
         ),
         margin: EdgeInsets.zero,
       ),
 
-      // Elevated Buttons
+      // ── Elevated Button ───────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
@@ -87,7 +99,7 @@ class AppTheme {
         ),
       ),
 
-      // Outlined Buttons
+      // ── Outlined Button ───────────────────────────────────
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: primary,
@@ -103,7 +115,7 @@ class AppTheme {
         ),
       ),
 
-      // Text Fields
+      // ── Text Fields ───────────────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
@@ -131,7 +143,7 @@ class AppTheme {
         hintStyle: const TextStyle(color: textSecondary),
       ),
 
-      // Text Styles
+      // ── Text Theme ────────────────────────────────────────
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
           color: textPrimary,
