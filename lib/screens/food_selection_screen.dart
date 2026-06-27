@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import '../repositories/local_meal_repository.dart';
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
@@ -57,6 +57,7 @@ class _FoodSelectionScreenState extends State<FoodSelectionScreen> {
           // M3: Gemini's estimate for the top prediction.
           // M4: Replace with USDA SQLite lookup for _confirmedFoodName.
           nutritionPer100g: widget.geminiResult.nutritionPer100g,
+          repository: LocalMealRepository(),
         ),
       ),
     );

@@ -38,7 +38,7 @@ class GeminiException implements Exception {
 class GeminiService {
   static const String _endpoint =
       'https://generativelanguage.googleapis.com/v1beta/models/'
-      'gemini-1.5-flash:generateContent';
+      'gemini-2.5-flash:generateContent';
 
   // The prompt asks Gemini to act as a food recognition expert and return
   // a strictly formatted JSON object. responseMimeType enforces JSON output
@@ -93,7 +93,7 @@ Rules:
       ],
       'generationConfig': {
         'temperature': 0.1,       // Low = consistent, factual output
-        'maxOutputTokens': 512,
+        'maxOutputTokens': 2048,
         'responseMimeType': 'application/json', // Forces clean JSON output
       },
     });

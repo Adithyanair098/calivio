@@ -3,13 +3,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
+import '../models/meal_entry.dart';
 import '../models/nutrition_info.dart';
+import '../repositories/meal_repository.dart';
 
-class NutritionResultScreen extends StatelessWidget {
+class NutritionResultScreen extends StatefulWidget {
   final File imageFile;
   final String confirmedFoodName;
   final double weightG;
   final NutritionInfo nutritionPer100g;
+
+  /// Abstract repository — never coupled to a concrete implementation.
+  /// Callers pass [LocalMealRepository] today; [FirebaseMealRepository]
+  /// in a future milestone with zero changes to this screen.
+  final MealRepository repository;
 
   const NutritionResultScreen({
     super.key,
@@ -17,12 +24,81 @@ class NutritionResultScreen extends StatelessWidget {
     required this.confirmedFoodName,
     required this.weightG,
     required this.nutritionPer100g,
+    required this.repository,
   });
 
   @override
+  State<NutritionResultScreen> createState() => _NutritionResultScreenState();
+}
+
+class _NutritionResultScreenState extends State<NutritionResultScreen> {
+  /// True while the async save is in-flight; disables both action buttons.
+  bool _isSaving = false;
+
+  /// Meal type chosen by the user before saving; defaults to snack.
+  MealType _selectedMealType = MealType.snack;
+
+  // ── Save logic ────────────────────────────────────────────────────────────
+
+  Future<void> _saveMeal() async {
+    setState(() => _isSaving = true);
+
+    try {
+      // Scale nutrition from per-100 g to the user's actual weight.
+      final scaled = widget.nutritionPer100g.scaledTo(widget.weightG);
+
+      final entry = MealEntry.create(
+        foodName: widget.confirmedFoodName,
+        weightGrams: widget.weightG,
+        calories: scaled.calories,
+        proteinG: scaled.proteinG,
+        carbsG: scaled.carbsG,
+        fatG: scaled.fatG,
+        fiberG: scaled.fiberG,
+        imagePath: widget.imageFile.path,
+        mealType: _selectedMealType,
+      );
+
+      await widget.repository.saveEntry(entry);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Meal saved!'),
+          backgroundColor: AppTheme.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+
+      // Return to the root screen after a successful save.
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    } catch (_) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Could not save meal. Please try again.'),
+          backgroundColor: Colors.red.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  // ── Build ─────────────────────────────────────────────────────────────────
+
+  @override
   Widget build(BuildContext context) {
-    // Scale all values from per-100 g to the user's actual weight
-    final scaled = nutritionPer100g.scaledTo(weightG);
+    final scaled = widget.nutritionPer100g.scaledTo(widget.weightG);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Nutrition Result')),
@@ -36,7 +112,7 @@ class NutritionResultScreen extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.file(
-                  imageFile,
+                  widget.imageFile,
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -50,12 +126,12 @@ class NutritionResultScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      confirmedFoodName,
+                      widget.confirmedFoodName,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  _WeightBadge(weightG: weightG),
+                  _WeightBadge(weightG: widget.weightG),
                 ],
               ),
               const SizedBox(height: 6),
@@ -107,36 +183,44 @@ class NutritionResultScreen extends StatelessWidget {
 
               // ── Fiber Card ─────────────────────────────────────────────
               _FiberRow(fiberG: scaled.fiberG),
-              const SizedBox(height: 36),
+              const SizedBox(height: 28),
+
+              // ── Meal Type Selector ─────────────────────────────────────
+              _MealTypeSelector(
+                selected: _selectedMealType,
+                onChanged: (type) =>
+                    setState(() => _selectedMealType = type),
+              ),
+              const SizedBox(height: 24),
 
               // ── Actions ────────────────────────────────────────────────
               ElevatedButton(
-                onPressed: () {
-                  // TODO M5: Save meal to SQLite database here.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text(
-                          'Meal saving will be implemented in Milestone 5.'),
-                      backgroundColor: AppTheme.primary,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                  );
-                },
+                onPressed: _isSaving ? null : _saveMeal,
                 style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(52)),
-                child: const Text('Save Meal'),
+                  minimumSize: const Size.fromHeight(52),
+                ),
+                child: _isSaving
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text('Save Meal'),
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () {
-                  // Pop all pushed routes back to MainScaffold
-                  Navigator.of(context)
-                      .popUntil((route) => route.isFirst);
-                },
+                // Disabled while saving to prevent navigation mid-write.
+                onPressed: _isSaving
+                    ? null
+                    : () => Navigator.of(context)
+                        .popUntil((route) => route.isFirst),
                 style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(52)),
+                  minimumSize: const Size.fromHeight(52),
+                ),
                 child: const Text('Discard & Start Over'),
               ),
             ],
@@ -150,6 +234,48 @@ class NutritionResultScreen extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════════════════
 // Private Sub-Widgets
 // ═══════════════════════════════════════════════════════════════════════════
+
+/// Segmented control for choosing the meal type before saving.
+class _MealTypeSelector extends StatelessWidget {
+  final MealType selected;
+  final ValueChanged<MealType> onChanged;
+
+  const _MealTypeSelector({
+    required this.selected,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Meal Type',
+          style: TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 10),
+        SegmentedButton<MealType>(
+          segments: MealType.values
+              .map(
+                (type) => ButtonSegment<MealType>(
+                  value: type,
+                  label: Text('${type.emoji} ${type.displayName}'),
+                ),
+              )
+              .toList(),
+          selected: {selected},
+          onSelectionChanged: (selection) => onChanged(selection.first),
+          showSelectedIcon: false,
+        ),
+      ],
+    );
+  }
+}
 
 class _WeightBadge extends StatelessWidget {
   final double weightG;
