@@ -16,7 +16,6 @@ AI-assisted nutrition tracking application for intelligent food recognition and 
   <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white"/>
 </p>
 
-**Tech Stack:** Flutter • Dart • SQLite • Gemini AI • Material 3
 
 Calivio is an AI-assisted nutrition tracking application that enables users to identify food from images, estimate nutritional values based on serving size, and maintain a persistent local meal history. The application combines Flutter, Gemini AI, and SQLite to deliver a responsive, offline-first mobile experience.
 
