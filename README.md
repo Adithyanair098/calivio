@@ -5,7 +5,7 @@
 <h1 align="center">Calivio</h1>
 
 <p align="center">
-AI-powered Flutter application for food recognition and intelligent nutrition tracking.
+An AI-powered Flutter application that recognizes food from images and tracks daily nutrition using Google Gemini AI.
 </p>
 
 <p align="center">
@@ -50,8 +50,73 @@ Calivio is an AI-assisted nutrition tracking application that enables users to i
 | ⚡ Image Compression | Compresses images before AI requests for faster uploads. |
 | 🚀 Analysis Cache | Uses in-memory caching to reduce repeated API calls. |
 
+## 🛠️ Tech Stack
+
+| Category | Technologies |
+|----------|--------------|
+| Framework | Flutter |
+| Language | Dart |
+| AI | Google Gemini API |
+| Database | SQLite |
+| Local Storage | SharedPreferences |
+| Device Storage | path_provider |
+| UI | Material 3 |
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Flutter SDK
+- Android Studio / VS Code
+- Gemini API Key
+
+### Installation
+
+```bash
+git clone https://github.com/Adithyanair098/calivio.git
+
+cd calivio
+
+flutter pub get
+```
+
+### 🔐 Environment Variables
+
+Create a `.env` file in the project root and add your Gemini API key:
+
+```env
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+```
+
+> **Note:** The `.env` file is ignored by Git and is not included in this repository for security reasons.
+
+### ▶️ Run the Application
+
+```bash
+flutter run
+```
+
+## 🎯 Project Motivation
 
 Calivio began as an opportunity to explore technologies that were new to me. Rather than building a simple demonstration project, I wanted to understand how AI services, image processing, local persistence, and clean architecture could work together in a practical mobile application.
 
 
 Throughout the project, my focus shifted from simply making the app work to improving code organization, performance, and maintainability.
+
+## 🚀 Future Improvements
+
+- Barcode scanning for packaged foods
+- Cloud synchronization across devices
+- Personalized nutrition recommendations
+- Weekly and monthly nutrition reports
+- Improved AI accuracy for complex meals
+
+## 👨‍💻 Author
+
+**Adithya Nair**
+
+If you found this project interesting, consider giving it a ⭐ on GitHub.
+
+## 📄 License
+
+This project is licensed under the MIT License.
