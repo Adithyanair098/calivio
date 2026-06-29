@@ -1,17 +1,47 @@
-# food_nutrition_tracker
+<p align="center">
+  <img src="assets/icons/app_icon.png" width="150"/>
+</p>
 
-A new Flutter project.
+<h1 align="center">Calivio</h1>
 
-## Getting Started
+<p align="center">
+AI-assisted nutrition tracking application for intelligent food recognition and nutrition tracking.
+</p>
 
-This project is a starting point for a Flutter application.
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white"/>
+  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white"/>
+</p>
 
-A few resources to get you started if this is your first Flutter project:
+**Tech Stack:** Flutter • Dart • SQLite • Gemini AI • Material 3
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Calivio is an AI-assisted nutrition tracking application that enables users to identify food from images, estimate nutritional values based on serving size, and maintain a persistent local meal history. The application combines Flutter, Gemini AI, and SQLite to deliver a responsive, offline-first mobile experience.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
+## 💡 Why Calivio?
+
+## ✨ Key Features
+
+| Feature | Description |
+|----------|-------------|
+| 📷 AI Food Recognition | Identifies food from images using the Gemini API. |
+| 🧠 Multiple AI Predictions | Displays multiple food predictions with confidence scores. |
+| 🥗 Nutrition Analysis
+Calculates calories and nutritional information based on AI-recognized food and serving size. |
+| 🥗 Nutrition Analysis | Calculates calories, macronutrients, and micronutrients. |
+| 📊 Daily Dashboard | Tracks daily nutrition intake and progress. |
+| 📝 Meal History
+Stores and organizes meal history locally using SQLite. |
+| ✏️ Edit & Delete | Modify or remove previously logged meals. |
+| ⚡ Image Compression | Compresses images before AI requests for faster uploads. |
+| 🚀 Analysis Cache | Uses in-memory caching to reduce repeated API calls. |
+
+
+Calivio began as an opportunity to explore technologies that were new to me. Rather than building a simple demonstration project, I wanted to understand how AI services, image processing, local persistence, and clean architecture could work together in a practical mobile application.
+
+
+Throughout the project, my focus shifted from simply making the app work to improving code organization, performance, and maintainability.
